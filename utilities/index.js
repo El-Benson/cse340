@@ -65,26 +65,28 @@ Util.buildClassificationGrid = async function (data) {
 * Build the view for the Vehicles Detail
 * ************************************ */
 Util.buildDetailDisplay = async function (data) {
-  let display
-  if (data.length > 0) {
-    data.forEach(item => {
-      display = `
-    <div class="detail-grid"> 
-    <img src="${item.inv_image}" alt="${item.inv_make} ${item.inv_name}"/>
-    <div class="detail-info"> 
-    <h2> ${item.inv_make} ${item.inv_model} Details </h2>
-    <p class="price"><span> Price: </span> $${new Intl.NumberFormat('en-US').format(item.inv_price)} </p>
-    <p class="description"><span> Description: </span> ${item.inv_description} </p>
-    <p class="color"><span> Color: </span> ${item.inv_color} </p>
-    <p class="miles"><span> Miles: </span> ${new Intl.NumberFormat('en-US').format(item.inv_miles)} </p>
-    </div>
-    </div>`
-    })
-  } else {
-    display = '<p class="notice">Sorry, no matching vehicles could be found.</p>'
-  }
-  return display
+  let detail = '<div class="detail-grid">'
+  data.forEach((item) => {
+    const price = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.inv_price)
+    const miles = new Intl.NumberFormat('en-US').format(item.inv_miles)
+
+    detail += `
+      <div class="detail-img">
+        <img src="${item.inv_image}" alt="${item.inv_make} ${item.inv_model}">
+      </div>
+      <div class="detail-info">
+        <h2>${item.inv_year} ${item.inv_make} ${item.inv_model}</h2>
+        <p><strong>Price:</strong> ${price}</p>
+        <p><strong>Description:</strong> ${item.inv_description}</p>
+        <p><strong>Color:</strong> ${item.inv_color}</p>
+        <p><strong>Miles:</strong> ${miles}</p>
+      </div>
+    `
+  })
+  detail += '</div>'
+  return detail
 }
+
 
 Util.buildClassificationList = async function (classification_id = null) {
   let data = await invModel.getClassifications()
