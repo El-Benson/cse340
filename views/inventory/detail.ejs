@@ -1,8 +1,69 @@
-<div class="detail-page">
-  <div class="titleCart">
-    <h1><%= title %></h1>
-    <%- cart %>
-  </div>
+<%- include("../partials/head") %>
+<%- include("../partials/header") %>
+<%- include("../partials/nav") %>
 
-  <%- display %>
-</div>
+<main>
+  <!-- Vehicle Title -->
+  <h1><%= title %></h1>
+
+  <!-- =========================
+       VEHICLE DETAILS SECTION
+  ========================== -->
+  <section class="vehicle-details">
+    <div class="vehicle-info">
+      <img src="<%= vehicle.inv_image %>" alt="<%= vehicle.inv_make %> <%= vehicle.inv_model %>">
+      <ul>
+        <li><strong>Make:</strong> <%= vehicle.inv_make %></li>
+        <li><strong>Model:</strong> <%= vehicle.inv_model %></li>
+        <li><strong>Year:</strong> <%= vehicle.inv_year %></li>
+        <li><strong>Price:</strong> $<%= vehicle.inv_price.toLocaleString() %></li>
+        <li><strong>Description:</strong> <%= vehicle.inv_description %></li>
+        <li><strong>Color:</strong> <%= vehicle.inv_color %></li>
+        <li><strong>Mileage:</strong> <%= vehicle.inv_miles.toLocaleString() %> miles</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- =========================
+       CUSTOMER REVIEWS SECTION
+  ========================== -->
+  <section class="vehicle-reviews">
+    <h2>Customer Reviews</h2>
+
+    <% if (locals.loggedin) { %>
+      <form action="/review/add" method="post" class="review-form">
+        <textarea
+          name="review_text"
+          rows="4"
+          placeholder="Write your review..."
+          required
+        ></textarea>
+
+        <!-- Hidden fields -->
+        <input type="hidden" name="inv_id" value="<%= vehicle.inv_id %>">
+        <input type="hidden" name="account_id" value="<%= locals.accountData.account_id %>">
+
+        <button type="submit" class="submit-btn">Submit Review</button>
+      </form>
+    <% } else { %>
+      <p><a href="/account/login">Login</a> to write a review.</p>
+    <% } %>
+
+    <!-- Display Reviews -->
+    <% if (reviews && reviews.length > 0) { %>
+      <ul class="review-list">
+        <% reviews.forEach(r => { %>
+          <li class="review-item">
+            <p><strong><%= r.account_firstname %> <%= r.account_lastname %></strong></p>
+            <p><%= r.review_text %></p>
+            <small>Posted on <%= new Date(r.review_date).toLocaleDateString() %></small>
+          </li>
+        <% }) %>
+      </ul>
+    <% } else { %>
+      <p>No reviews yet. Be the first to leave one!</p>
+    <% } %>
+  </section>
+</main>
+
+<%- include("../partials/footer") %>
